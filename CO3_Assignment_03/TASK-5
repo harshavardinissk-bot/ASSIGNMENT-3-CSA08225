@@ -1,0 +1,20 @@
+from time import perf_counter
+def by_loop(readings):
+    valid=[]
+    for c in readings:
+        if -50<=c<=50: valid.append(c)
+    return valid
+def by_comprehension(readings):
+    return [c for c in readings if -50<=c<=50]
+def by_filter(readings):
+    return list(filter(lambda c:-50<=c<=50, readings))
+readings=[-55,0,2,5,8,11,51]
+valid=by_comprehension(readings)
+fahrenheit=[c*9/5+32 for c in valid]
+fahrenheit_map=list(map(lambda c:c*9/5+32, filter(lambda c:-50<=c<=50,readings)))
+alarms=[minute for minute,c in enumerate(readings) if c<2 or c>8]
+print("valid C:",valid)
+print("valid F:",fahrenheit)
+print("map/filter F:",fahrenheit_map)
+print("alarm minutes:",alarms)
+assert by_loop(readings)==by_comprehension(readings)==by_filter(readings)
