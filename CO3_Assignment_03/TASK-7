@@ -1,0 +1,29 @@
+import re
+from time import perf_counter
+def norm_phone(raw):
+    digits="".join(ch for ch in raw if ch.isdigit())
+    if len(digits)==12 and digits.startswith("91"): digits=digits[2:]
+    return digits
+def norm_name(raw):
+    return " ".join(re.sub(r"[^a-z0-9 ]"," ",raw.lower()).split())
+def merge_contacts(contacts):
+    groups={}
+    for contact in contacts:
+        key=norm_phone(contact.get("phone",""))
+        if not key: continue
+        group=groups.setdefault(key,{"names":set(),"normalized_names":set(),"phones":set(),"emails":set()})
+        name=contact.get("name","").strip()
+        email=contact.get("email","").strip().lower()
+        if name:
+            group["names"].add(name)
+            group["normalized_names"].add(norm_name(name))
+        group["phones"].add(contact["phone"].strip())
+        if email: group["emails"].add(email)
+    return groups
+contacts=[
+ {"name":"Dr. Ravi","phone":"+91 98400 12345","email":"Ravi@Example.com"},
+ {"name":"ravi kumar","phone":"9840012345","email":"ravi@example.com"},
+ {"name":"Meena","phone":"+91-90000-11111"},
+ {"name":"","phone":""},
+]
+print(merge_contacts(contacts))
