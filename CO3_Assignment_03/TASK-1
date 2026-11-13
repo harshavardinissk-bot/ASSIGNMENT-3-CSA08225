@@ -1,0 +1,30 @@
+Program: weekly sums use slices; the moving average is provided both by a direct seven-value sum and a sliding running sum. Day/week positions below are one-based in the report.
+from random import Random
+from time import perf_counter
+ 
+def weekly_totals(readings):
+    return [sum(readings[i:i+7]) for i in range(0, len(readings), 7)]
+ 
+def moving_naive(values, window=7):
+    return [sum(values[i:i+window]) / window
+            for i in range(len(values)-window+1)]
+ 
+def moving_running(values, window=7):
+    if len(values) < window: return []
+    current=sum(values[:window]); result=[current/window]
+    for i in range(window, len(values)):
+        current += values[i] - values[i-window]
+        result.append(current/window)
+    return result
+ 
+readings=[2,0,4,1,3,0,5, 8,1,2,0,4,6,3]
+weeks=weekly_totals(readings)
+wet=max(range(len(weeks)), key=weeks.__getitem__)
+dry=min(range(len(weeks)), key=weeks.__getitem__)
+dry_days=[i+1 for i,x in enumerate(readings) if x==0]
+print("weekly totals:", weeks)
+print("wettest week:", wet+1, "total", weeks[wet])
+print("driest week:", dry+1, "total", weeks[dry])
+print("7-day averages:", moving_running(readings))
+print("dry days:", dry_days)
+print("slices:", readings[7:14], readings[-7:], readings[::7])
