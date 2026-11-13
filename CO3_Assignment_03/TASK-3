@@ -1,0 +1,30 @@
+calls=[
+    "seeds not received seeds delayed",
+    "fertiliser price high",
+    "seeds price high subsidy not received",
+]
+STOP={"not","high"}
+def frequencies(texts, stop):
+    counts={}
+    for text in texts:
+        for word in text.lower().split():
+            word=word.strip(".,!?;:")
+            if word and word not in stop:
+                counts[word]=counts.get(word,0)+1
+    return counts
+def top(counts,k):
+    return sorted(counts.items(), key=lambda pair:(-pair[1],pair[0]))[:k]
+def group_by_district(records):
+    grouped={}
+    for district,crop,text in records:
+        grouped.setdefault(district,[]).append((crop,text))
+    return grouped
+def group_by_crop(records):
+    grouped={}
+    for district,crop,text in records:
+        grouped.setdefault(crop,[]).append((district,text))
+    return grouped
+print(top(frequencies(calls,STOP),3))
+records=[("Salem","millet","dry soil"),("Erode","rice","pests")]
+print(group_by_district(records))
+print(group_by_crop(records))
